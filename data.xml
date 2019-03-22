@@ -1,0 +1,838 @@
+<?xml version="1.0"?>
+<response><item key="0"><title>&#x3010;Drupal&#x6559;&#x5B78;&#x3011;Commerce Spgateway &#x91D1;&#x6D41;&#x6A21;&#x7D44;&#x4ECB;&#x7D39;+&#x4F7F;&#x7528;</title><body><![CDATA[<p><img src="https://i.imgur.com/ajuZ8Na.jpg" alt="" /></p>
+<h2>前言</h2>
+<p>由於最近工作上的需要，需要串接<a href="https://www.spgateway.com/" target="_blank" rel="nofollow">智付通Spgateway</a>的金流。秉持著開源與推廣的精神，我們也有將這個模組放到<a href="https://www.drupal.org" target="_blank" rel="nofollow">Drupal</a>之中，讓想要用Drupal Commerce來開發電子商務網站的人，可以考慮使用<a href="https://www.drupal.org/project/commerce_spgateway" target="_blank" rel="nofollow">Commerce Spgateway模組</a>來進行金流的串接。</p>
+<h2>模組簡介</h2>
+<p>Commerce Spgateway是一個串接藍新金流（智付通金流）的模組，主要是使用在<a href="https://www.drupal.org/project/commerce" target="_blank" rel="nofollow">Drupal Commerce</a>與D7的環境之下，提供各種金流串接的服務。</p>
+<ul><li>模組名稱：Commerce Spgateway</li>
+<li>專案網址：<a href="https://www.drupal.org/project/commerce_spgateway" target="_blank" rel="nofollow">前往下載</a>
+</li>
+<li>需求環境：Drupal 7 + Drupal Commerce</li>
+<li>重要備註：並非官方提供的模組，而是HelloSanta自行開發。</li>
+<li>支援金流：信用卡、ATM轉帳、超商代碼繳費、WebATM、超商條碼繳費、超商取貨付款、Pay2Go電子錢包、Google Pay、Samsung Pay</li>
+</ul><h2>如何安裝</h2>
+<p>這個模組安裝的方式很容易，安裝方式如同基本的Drupal模組安裝，將模組下載到sites/all/modules之中並且於後台啟用即可，當然若你是習慣使用Drush來進行安裝的，也可以直接使用以下指令進行安裝。</p>
+<pre><code class="language-shell=">$ drush en commerce_spgateway -y
+</code></pre>
+<p>安裝完畢並且啟用之後，即可看到<strong>智付通後台設定畫面</strong>（admin/commerce/config/spgateway）與<strong>數個付款方式</strong>(admin/commerce/config/payment-methods)。</p>
+<h3>智付通設定後台</h3>
+<p><img src="https://i.imgur.com/zlYLT3S.png" alt="" /></p>
+<h3>付款方式後台畫面</h3>
+<p><img src="https://i.imgur.com/QRtD0sn.png" alt="" /></p>
+<h2>申請測試帳號</h2>
+<p>若想要測試智付通的金流方式，需要先到<a href="https://cwww.newebpay.com/" target="_blank" rel="nofollow">智付通的測試平台</a>，進行帳號的申請方能使用，若申請完畢之後，需要於他們後台，啟用各種金流服務，並且於後台將會拿到你的<strong>商店代號</strong>（MerchantID）與<strong>HashKey</strong>、<strong>HashIV</strong>兩種金鑰。</p>
+<p>備註：</p>
+<ol><li>記得信用卡啟用後，要等一段時間測試環境才會通過。</li>
+<li>測試帳號持續30天。</li>
+</ol><h2>如何設定</h2>
+<p>若現在已經開通了測試平台拿到了兩組KEY之後，事情的準備工作就已經完成了。可以直接進入模組後台（admin/commerce/config/spgateway）進行設定。</p>
+<p>參數說明：</p>
+<ul><li>智付通系統狀態：可以切換測試環境與正式環境，預設為測試環境。</li>
+<li>商店代號MerchantID：智付通平台可得到此資訊。</li>
+<li>HashKey:智付通平台可得到此資訊。</li>
+<li>HashIV:智付通平台可得到此資訊。</li>
+<li>商品資訊：在Spgateway付款頁面左邊可以看到此資訊。</li>
+<li>商店備註：提供此參數，將會於 MPG 頁面呈現商店備註內容。</li>
+<li>付款人電子信箱是否開放修改：在Spgateway付款時，是否可以修改電子信箱。</li>
+<li>智付通會員：要用Spgateway是否一定要是智付通會員。</li>
+</ul><h2>進行付款結帳</h2>
+<p>若上述的設定都已經完善，再次回到Drupal的購物流程，即可以看到幾種付款方式等著你選擇囉。於智付通後台，確認金流的功能都已經啟用的狀態下，就可以大膽的按下付款了，以信用卡功能為例，馬上就會看到信用卡的刷卡畫面了。</p>
+<h3>購物流程選擇付款方式頁面</h3>
+<p><img src="https://i.imgur.com/WX312h5.png" alt="" /></p>
+<h3>智付通選擇信用卡付款畫面</h3>
+<p><img src="https://i.imgur.com/hNeoBnb.png" alt="" /></p>
+<h2>想要調整交易限制時間？有效繳費期間？</h2>
+<p>在這個模組當中，每種金流方式，都有其對應的參數設定，例如：信用卡付款要在60秒內刷卡完畢。超商代收需要在7天內付款完畢。這些金流方式的設定，都在各自的付款方式設定之中。</p>
+<p>舉例信用卡為例，例如想要將信用卡的交易限制改成90秒內要刷卡付款。</p>
+<ul><li>第一步：去付款方式後台（admin/commerce/config/payment-methods），選擇編輯</li>
+</ul><blockquote>
+<p><img src="https://i.imgur.com/HvHizcs.png" alt="" /></p>
+</blockquote>
+<ul><li>第二步：編輯底下的付款方式</li>
+</ul><blockquote>
+<p><img src="https://i.imgur.com/bI2cfw3.png" alt="" /></p>
+</blockquote>
+<ul><li>第三步：修改交易秒數</li>
+</ul><blockquote>
+<p><img src="https://i.imgur.com/gMs6sQH.png" alt="" /></p>
+</blockquote>
+<p>所有付款方式都可以比照上面的作法，就可以做進一步的設定囉。</p>
+<h2>如何查看交易記錄？</h2>
+<p>在使用Drupal Commerce購物之後，所有的付款方式都有交易記錄，並且每筆交易紀錄中有著跟智付通對應的所有交易參數。要查看這些交易紀錄。</p>
+<p><img src="https://i.imgur.com/3ypmdXN.png" alt="" /></p>
+<p>查看方式只需要到訂單列表（admin/commerce/orders），針對想要查看的訂單，選擇付款方式即可看到對應的交易紀錄（admin/commerce/orders/1/payment）（以訂單1的交易紀錄為例）</p>
+<h2>小結</h2>
+<p>這個模組主要是希望能夠讓想要串接智付寶金流的人，能夠更快速的串接金流。其實主要原因也是智付通官方並未針對Drupal Commerce提供對應的模組&gt;"&lt;
+若大家在使用上面，有發現問題，也歡迎在這個專案<a href="https://www.drupal.org/project/issues/commerce_spgateway?categories=All" target="_blank" rel="nofollow">開Issue告訴我們問題是什麼</a>，希望這個模組可以幫到需要的人囉～ Enjoy～</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag></field_tag></item><item key="1"><title>Decouple&#x7CFB;&#x5217;&#xFF1A;&#x5982;&#x4F55;&#x4F7F;&#x7528; JSON-API&#xFF1A;&#x5B89;&#x88DD;&#x3001;&#x57FA;&#x672C;&#x4F7F;&#x7528;</title><body><![CDATA[<p><img src="https://i.imgur.com/PA9Mjja.jpg" alt="" /></p>
+<h2>前言</h2>
+<p>要完成Decouple Drupal的作法，API是非常重要的議題，而<a href="https://www.drupal.org/project/jsonapi" target="_blank" rel="nofollow">JSON-API</a> 則是產生API的一個好用模組，不同於核心的rest api，這個模組裝了以後，全部設定預設就完成，並且可以通過核心的權限來控制每個api的資料傳輸，搭配一系列的參數使用方式，可以達到Decouple的所有需求。 接下來將會一連串來進行這個模組的介紹與使用。</p>
+<h2>安裝</h2>
+<p>可以考慮使用 composer進行安裝或直接下載的方式</p>
+<p>step1: 使用composer下載</p>
+<pre><code>composer require drupal/jsonapi
+</code></pre>
+<p>step2: 啟用模組</p>
+<pre><code>drush en jsonapi
+</code></pre>
+<h2>檢查是否完成</h2>
+<p>若您安裝完畢之後，會發現後台沒有任何可以設定的地方</p>
+<p><img src="https://i.imgur.com/yJV8MAg.png" alt="" /></p>
+<p>這個使用請輸入以下網址【http://yourdomain/jsonapi】</p>
+<p>應該就可以看到基本的API路徑畫面囉</p>
+<p>以下是我測試範例</p>
+<p><img src="https://i.imgur.com/rBlUZHv.png" alt="" /></p>
+<h2>基本練習：取得所有Article文章：GET 方法</h2>
+<p>在瀏覽器上輸入以下網址，就可以看到所有的Article文章了</p>
+<pre><code>http://yourdomain/jsonapi/node/article
+</code></pre>
+<p>以下擷取我的測試環境
+<img src="https://i.imgur.com/5f4PYbC.png" alt="" /></p>
+<p>看到上面的畫面就代表已經安裝完畢囉，恭喜 ：）</p>
+<h2>結論</h2>
+<p>由於最近在開發Decouple的專案，因此會需要很多前後端分離的技術。原本使用的是核心的Rest API搭配Views來進行API製作，但覺得稍嫌麻煩（雖然已經很方便了），但看到JSON API的模組寫到將會是最輕量化的選擇，而且有著很棒很方便的彈性，我想這個是我們所需要的，接下來就開始撰寫一系列這個模組的相關文章與應用，希望能夠分享給大家。</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag>JSONAPI, Drupal8, Decouple</field_tag></item><item key="2"><title>&#x9084;&#x518D;&#x4F7F;&#x7528;Feeds&#x4F86;&#x8655;&#x7406;&#x8CC7;&#x6599;&#x532F;&#x5165;&#x55CE;&#xFF1F; &#x7528;&#x5916;&#x90E8;php script&#x505A;&#x8CC7;&#x6599;&#x8655;&#x7406;&#xFF0C;&#x5B89;&#x5168;&#x53C8;&#x65B9;&#x4FBF;&#xFF01;</title><body><![CDATA[<p><img src="https://i.imgur.com/oaYya1w.jpg" alt="" /></p>
+<h2>前言</h2>
+<p>是否大家都有處理過資料匯入的問題呢？ 想必用過Drupal的人都知道使用<a href="https://www.drupal.org/project/feed" target="_blank" rel="nofollow">Feeds</a>這個模組，功能非常非常強。但是，如果資料量很大的狀況下，很擔心網頁匯入到一半就timeout了，在設定上面也略顯複雜。若是簡單的Drupal 網站匯入是還好，若是很複雜的資料包含一堆關聯性資料要匯入，相信你會設定到痛苦連天。因此，若可以用外部的php撰寫匯入程式，方便又不擔心寫錯造成網頁噴錯，更重要的是，所有邏輯都可以用程式來直接完成，簡單方便又有彈性，還可以搭配crontab。快來看看</p>
+<h2>讀取外部資料+寫入到網站</h2>
+<p>這裡我就用一個簡單的作法，主要會進行 1.讀取JSON資料。2.使用外部php script進行資料匯入。 D7與D8的作法稍微有些不一樣，可以再參考看看以下的範例。</p>
+<h3>Drupal 7 Version</h3>
+<pre><code>/**
+ * Root directory of Drupal installation.
+ * Get the directory where this php is.
+ */
+define('DRUPAL_ROOT', getcwd());
+//include all necessary inc
+require_once DRUPAL_ROOT . '/includes/bootstrap.inc';
+require_once DRUPAL_ROOT . '/includes/common.inc';
+require_once DRUPAL_ROOT . '/includes/module.inc';
+require_once DRUPAL_ROOT . '/includes/file.inc';
+drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+//寫一篇文章
+$node = entity_create('node', array('type' =&gt; 'article'));
+$node-&gt;uid = 1;
+$new_node = entity_metadata_wrapper('node', $node);
+$new_node-&gt;title = 'test title';
+$new_node-&gt;save();
+
+</code></pre>
+<h3>Drupal 8 Version</h3>
+<pre><code>define('DRUPAL_DIR', __DIR__ .'/web');
+use Drupal\Core\DrupalKernel;
+use Symfony\Component\HttpFoundation\Request;
+
+$autoloader = require_once DRUPAL_DIR . '/autoload.php';
+$request = Request::createFromGlobals();
+$kernel = DrupalKernel::createFromRequest($request, $autoloader, 'prod');
+$kernel-&gt;boot();
+
+require_once DRUPAL_DIR . '/core/includes/database.inc';
+require_once DRUPAL_DIR . '/core/includes/schema.inc';
+require_once DRUPAL_DIR . '/core/includes/module.inc';
+require_once DRUPAL_DIR . '/core/includes/entity.inc';
+
+$node = entity_create('node', array(
+        'type' =&gt; 'page',
+        'title' =&gt;'Creating another node',
+        'langcode' =&gt; 'zh-hant',
+        'body' =&gt; array(
+        'value' =&gt;'The body of the content',
+        'format' =&gt; 'full_html',
+        ),
+        'uid'=&gt;1,
+    )
+  );
+ $node-&gt;save();
+</code></pre>
+<h2>結論</h2>
+<p>用上面的作法，可以讓我們處理非常複雜的邏輯，並且可以搭配Crontab來自動化做很多資料的處理，是個非常好用且實用的作法：）</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag>Drupal, Drupal7, &#x532F;&#x5165;&#x8CC7;&#x6599;</field_tag></item><item key="3"><title>Drupal &#x904B;&#x7528;Crontab &#x4F86;trigger Elysia Cron</title><body><![CDATA[<h2>前言</h2>
+<p>其實drupal在背後常常會在執行cron，可是執行cron的時候常常會造成系統的loading，這個時候如果我們可以讓cron在某個特定時間執行，或是每特定時間執行，想必會有一定的改善所以用Elysia Cron我們就可以將不同的cron執行時間拆分開來解決這個問題
+首先我們先安裝Elysia Cron這個模組之後在設定/系統/cron settings</p>
+<p>選擇設定頁籤</p>
+<p>CLICK FOR HELP AND CRON RULES AND SCRIPT SYNTAX 可以先看一下設定時間的範例</p>
+<p>SINGLE JOB SETTINGS 就是我們設定rules的地方</p>
+<p>像我們這邊就設定 ctools_cron每分鐘執行一次之後儲存設定，等阿等怎麼就是不會執行呢
+原來是drupal沒辦法幫我們分別執行cron所以必須要靠伺服器來幫我們trigger
+這個時候要注意
+Run cron on visitor's requests, every要設定Never</p>
+<p>接下來就是去設定伺服器了
+以ubuntu為例 下指令</p>
+<p>像這邊我們就設定每一分鐘 使用curl來觸發執行cron的網址 "&gt;/dev/null 2&gt;&amp;1"這段是來忽略輸出log檔的否則/root資料夾底下會有一堆空的log檔</p>
+<p>cron_key在你的報告/狀態報告可看到執行cron的網址</p>
+<p>只要設定好之後伺服器就會幫我們每一分鐘去執行cron，elysia cron會在幫我們檢查時間是否到了</p>
+<p>以上就是一些簡單的教學
+ </p>
+<h2>參考資料：</h2>
+<ol><li>http://askubuntu.com/questions/2368/how-do-i-set-up-a-cron-job</li>
+<li>http://superuser.com/questions/71428/what-does-21-do-in-command-line</li>
+</ol>]]></body><status>&#x958B;&#x555F;</status><category>3</category><field_tag>Drupal, Drupal7</field_tag></item><item key="4"><title>drupal7 &#x5B89;&#x88DD; varnish4</title><body><![CDATA[<p>drupal 安裝varnish 4相比varnish 3 ，最主要的是settings.php 不用做出更改，減少了網站壞掉的風險，varnish 4 使用drupal內建的效能模組控制，開啟與關閉，甚至連cache清除也可設定，比起varnish 3 可以說少了很多風險。
+當然少了風險，效能方面卻稍微弱了一點，畢竟缺少drupal特定模組的支援，不過依然比其他快取好上很多。
+這次是以ubuntu apache2作為安裝前提
+安裝方法
+ 
+1.系統更新
+sudo apt-get update
+sudo apt-get upgrade -y
+ 
+2.安裝varnish
+apt-get install apt-transport-https
+安裝套件
+curl https://repo.varnish-cache.org/ubuntu/GPG-key.txt | apt-key add -
+讓apt能夠知道varnish 4
+echo "deb https://repo.varnish-cache.org/ubuntu/ precise varnish-4.0" &gt;&gt; /etc/apt/sources.list.d/varnish-cache.list
+重新update
+apt-get update
+安裝varnish
+apt-get install varnish
+3.設定varnish
+nano /etc/default/varnish
+更改成監聽80port 與更改記憶體(預設256m)
+DAEMON_OPTS="-a :6082 <br />
+-T localhost:6082 <br />
+-f /etc/varnish/default.vcl <br />
+-S /etc/varnish/secret <br />
+-s malloc,256m"
+ 
+-a監聽port
+-T管理port
+-f varnish的詳細設定檔位子
+-S varnish的key
+-s 內存設定</p>
+<p>儲存後，更改default.vcl
+nano /etc/varnish/default.vcl
+當然在編輯前建議先複製一份改名defaultold.vcl以避免設定出錯後無法復原
+＃默認後端的定義。將其設置為指向您的web服務器。 backend default {  .host = "127.0.0.1";  .port = "8080"; }
+在default.vcl內最下方貼上：</p>
+<hr /><p>sub vcl_recv {</p>
+<pre><code># Return (pass) instructs Varnish not to cache the request
+# when the condition is met.
+
+## ADMIN PAGES ##
+
+# Here we filter out all URLs containing Drupal administrative sections
+if (req.url ~ "^/status\.php$" ||
+    req.url ~ "^/update\.php$" ||
+    req.url ~ "^/admin$" ||
+    req.url ~ "^/admin/.*$" ||
+    req.url ~ "^/user$" ||
+    req.url ~ "^/user/.*$" ||
+    req.url ~ "^/flag/.*$" ||
+    req.url ~ "^.*/ajax/.*$" ||
+    req.url ~ "^.*/ahah/.*$") {
+       return (pass);
+}
+
+
+## BACKUP AND MIGRATE MODULE ##
+
+# Backup and Migrate is a very popular Drupal module that needs to be excluded
+# It won't work with Varnish
+if (req.url ~ "^/admin/content/backup_migrate/export") {
+    return (pipe);
+}
+
+## COOKIES ##
+
+# Remove cookies for stylesheets, scripts, and images used throughout the site.
+# Removing cookies will allow Varnish to cache those files.
+if (req.url ~ "(?i)\.(css|js|jpg|jpeg|gif|png|ico)(\?.*)?$") {
+    unset req.http.Cookie;
+}
+
+# Remove all cookies that are not necessary for Drupal to work properly.
+# Since it would be cumbersome to REMOVE certain cookies, we specify
+# which ones are of interest to us, and remove all others. In this particular
+# case we leave SESS, SSESS and NO_CACHE cookies used by Drupal's administrative
+# interface. Cookies in cookie header are delimited with ";", so when there are
+# many cookies, the header looks like "Cookie1=value1; Cookie2=value2; Cookie3..." 
+# and so on. That allows us to work with ";" to split cookies into individual
+# ones.
+#
+# The method for filtering unnecessary cookies has been adopted from:
+# https://fourkitchens.atlassian.net/wiki/display/TECH/Configure+Varnish+3+for+Drupal+7
+if (req.http.Cookie) {
+    # 1. We add ; to the beginning of cookie header
+    set req.http.Cookie = ";" + req.http.Cookie;
+    # 2. We remove spaces following each occurence of ";". After this operation
+    # all cookies are delimited with no spaces.
+    set req.http.Cookie = regsuball(req.http.Cookie, "; +", ";");
+    # 3. We replace ";" INTO "; " (adding the space we have previously removed) in cookies
+    # named SESS..., SSESS... and NO_CACHE. After this operation those cookies will be 
+    # easy to differentiate from the others, because those will be the only one with space
+    # after ";"   
+    set req.http.Cookie = regsuball(req.http.Cookie, ";(SESS[a-z0-9]+|SSESS[a-z0-9]+|NO_CACHE)=", "; \1=");
+    # 4. We remove all cookies with no space after ";", so basically we remove all cookies other
+    # than those above.
+    set req.http.Cookie = regsuball(req.http.Cookie, ";[^ ][^;]*", "");
+    # 5. We strip leading and trailing whitespace and semicolons.
+    set req.http.Cookie = regsuball(req.http.Cookie, "^[; ]+|[; ]+$", "");
+
+    # If there are no cookies after our striping procedure, we remove the header altogether,
+    # thus allowing Varnish to cache this page
+    if (req.http.Cookie == "") {
+        unset req.http.Cookie;
+    }
+    # if any of our cookies of interest are still there, we disable caching and pass the request
+    # straight to Apache and Drupal
+    else {
+        return (pass);
+    }
+}
+</code></pre>
+<p>} 
+ </p>
+<p>sub vcl_backend_response {
+# Remove cookies for stylesheets, scripts and images used throughout the site.
+# Removing cookies will allow Varnish to cache those files. It is uncommon for
+# static files to contain cookies, but it is possible for files generated
+# dynamically by Drupal. Those cookies are unnecessary, but could prevent files
+# from being cached.
+if (bereq.url ~ "(?i).(css|js|jpg|jpeg|gif|png|ico)(?.*)?$") {
+unset beresp.http.set-cookie;
+}
+}--------------------------------------------------------
+儲存後重新啟動varnish
+service varnish restart
+4.web伺服器的port 80 改port 8080
+apache2
+nano /etc/apache2/ports.conf
+NameVirtualHost *:8080
+Listen 8080
+nano /e tc/apache2/sites-available/default
+ </p>
+<p>更改完後重啟apache2
+service apache2 restart
+ 
+5.drupal設定
+開啟drupal的網頁
+登入後，設定&gt;開發&gt;效能
+勾選
+匿名使用者頁面快取
+下面的
+最短的快取保存時間
+快取頁面有效期限
+ 
+都選擇5分鐘
+這樣每過5分鐘快取緩存就會清除並在再次生成
+這樣外面匿名使用者觀看網頁時，過5分鐘重新整理頁面，會出現編輯者剛編輯文章
+如果不是即時網站，快取清除大概30分鐘左右即可。
+ 
+測試機資料(vagrant )</p>
+<p>測試資料（siege)</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag></field_tag></item><item key="5"><title>apache2 pagespeed&#x7DB2;&#x9801;&#x901F;&#x5EA6;&#x512A;&#x5316;</title><body><![CDATA[<p>網站速度不但對關鍵字排名具有影響，更是一個考驗使用者耐心的重大因素，以當前的行動裝置趨勢來說，網頁速度更是顯得重要，有越來越多使用者是用手機在外面上網，充分利用這些零碎且寶貴的時間上網，若進到了一個網站讀取速度太慢，使用者是很少有耐心等候網頁載入完畢的
+這次我們將安裝，pagespeed來加速我們網頁。
+apache2內建的模組有pagespeed所以安裝與啟用上非常容易。
+pagespeed apache2 安裝與啟動</p>
+<ol><li>下載
+For 64bit System -
+$ wget https://dl-ssl.google.com/dl/linux/direct/mod-pagespeed-stable_current_amd64.deb
+For 32bit System -
+$ wget https://dl-ssl.google.com/dl/linux/direct/mod-pagespeed-stable_current_i386.deb
+2.安裝
+dpkg -i mod-pagespeed-stable*.deb
+接著他會提示要重啟apache2
+service apache2 restart
+.啟用與關閉
+ 
+在/etc/apache2/mods-available/pagespeed.conf
+ModPagespeed on #啟用
+ModPagespeed off ＃關閉
+因為模組狀態是有限定本機才能觀看，所以必須去作設定
+一樣的檔案中，將ip改成自己的ip</li>
+</ol><p>Order allow,deny
+Allow from localhost
+Allow from 127.0.0.1
+Allow from   ip
+SetHandler pagespeed_admin</p>
+<p> </p>
+<p>Order allow,deny
+Allow from localhost
+Allow from 127.0.0.1
+Allow from ip
+SetHandler pagespeed_global_admin</p>
+<p> 
+如果有反向代理，那必須要啟用以下，讓pagespeed知道要把東西給誰處理</p>
+<p>ModPagespeedDownstreamCachePurgeLocationPrefix http://localhost:80localhost 要改成 反向代理的ip </p>
+<p>ModPagespeedDownstreamCacheRebeaconingKey 填上反向代理的key密碼（比如varnish，key會在/etc/varnish/secret)
+這兩個指令在apache2應該都是被＃註解的，解除註解後重啟apache2就可以
+service apache2 restart
+ 
+在輸入的ip的機器上開啟瀏覽器
+access(ip) /pagespeed_admin
+ </p>
+<p> 
+ 
+資料來源：
+http://tecadmin.net/install-apache2-with-mod-pagespeed-on-ubuntu/
+https://developers.google.com/speed/pagespeed/module/downstream-caching
+ </p>]]></body><status>&#x958B;&#x555F;</status><category>3</category><field_tag></field_tag></item><item key="6"><title>drupal&#x5B89;&#x88DD;redis</title><body><![CDATA[<p>快速安裝方式
+sudo apt-get install software-properties-common python-software-properties
+sudo add-apt-repository ppa:chris-lea/redis-server
+sudo apt-get update
+sudo apt-get install redis-server
+ 
+啟動關閉
+redis-server start  啟動
+redis-server stop  關閉
+redis-server restart 重新啟動
+ 
+移除
+sudo apt-get remove redis-server
+關於drupal上使用請看步驟7
+ 
+手動安裝方式
+1.安裝編譯工具
+sudo apt-get install build-essential
+sudo apt-get install tcl8.5
+2.下載與編譯
+cd /root/
+wget http://download.redis.io/releases/redis-2.8.6.tar.gz  （也有最近redis 3.0.0的版本，安裝方式是一樣的）
+tar xvf redis-2.8.6.tar.gz
+cd redis-2.8.6
+檢查
+ls -tlr</p>
+<p>make
+ 
+3.編譯測試
+make test</p>
+<p>4.安裝redis
+make install
+5.啟動ununtu設定
+cd utils/
+sudo ./install_server.sh
+依照他給的預設就行
+ 
+6.複製文件至/etc/init.d/ 使ubuntu可以直接用指令service 啟用redis
+ 
+mkdir /etc/redis
+cd /root/redis-2.8.6
+cp redis.conf /etc/redis/6379.conf
+cd /root/redis-2.8.6/utils/
+cp redis_init_script /etc/init.d/redisd
+ 
+測試
+service redisd stop
+service redisd start
+ 
+ 
+7.drupal的配置
+ 
+predis庫 https://github.com/nrk/predis
+ 
+7-1.下載predis 庫到drupal的 sites/all/libraries/
+ 
+cd sites/all/libraries/
+git clone https://github.com/nrk/predis.git
+ 
+ 
+7-2.下載並啟用drupal redis模組
+https://www.drupal.org/project/redis
+drush dl redis
+drush en redis
+ 
+7-3.在settings.php 給設定
+ 
+$conf['redis_client_interface'] = 'Predis';
+$conf['redis_client_host'] = '127.0.0.1';
+$conf['lock_inc'] = 'sites/all/modules/redis/redis.lock.inc';
+$conf['cache_backends'][] = 'sites/all/modules/redis/redis.autoload.inc';
+$conf['cache_default_class'] = 'Redis_Cache';
+ 
+ 
+資料來源：
+http://www.darrenmothersele.com/blog/2014/02/25/drupal-redis/
+http://sarc.io/index.php/nosql/156-redis-3-0-0-beta-3
+http://www.ithome.com.tw/news/96023</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag></field_tag></item><item key="7"><title>drupal7&#x5B89;&#x88DD;varnish &#x4F7F;&#x7528;</title><body><![CDATA[<p>1.首先先讓系統更新
+      apt-get update
+      apt-get upgrade -y
+2.將varnish 的套件加入ubuntu的套件庫
+      sudo  curl http://repo.varnish-cache.org/debian/GPG-key.txt | sudo apt-key  add -</p>
+<p>  用Nano  編輯器開啟 sources.list 將varnish 套件庫加入，才能執行安裝 
+           sudo nano /etc/apt/sources.list
+  在最下面貼上這行 
+           deb http://repo.varnish-cache.org/ubuntu/ lucid varnish-3.0</p>
+<p>3.接著安裝Varnish 這行是要讓系統抓到剛剛加入的套件庫
+    apt-get update  
+    apt-get install varnish
+4.設定Varnish
+    sudo nano /etc/default/varnish
+將DAEMON_OPTS="-a:6081 更改為80 這意思是讓Varnish 使用Port:80
+-s malloc 是指系統要配多少記憶體給Varnish 預設是256m </p>
+<p>接著編輯default.vcl
+sudo nano /etc/varnish/default.vcl
+關於vcl這邊有許多寫法，先從基本更改
+------------------------------------------------------------------------------------------------------------預設檔</p>
+<h1>This is a basic VCL configuration file for varnish.  See the vcl(7)</h1>
+<h1>man page for details on VCL syntax and semantics.</h1>
+<h1></h1>
+<h1>Default backend definition.  Set this to point to your content</h1>
+<h1>server.</h1>
+<p>backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
+}</p>
+<h1>Below is a commented-out copy of the default VCL logic.  If you</h1>
+<h1>redefine any of these subroutines, the built-in logic will be</h1>
+<h1>appended to your code.</h1>
+<h1>sub vcl_recv {</h1>
+<h1>    if (req.restarts == 0) {</h1>
+<h1>      if (req.http.x-forwarded-for) {</h1>
+<h1>          set req.http.X-Forwarded-For =</h1>
+<h1>              req.http.X-Forwarded-For + ", " + client.ip;</h1>
+<h1>      } else {</h1>
+<h1>          set req.http.X-Forwarded-For = client.ip;</h1>
+<h1>      }</h1>
+<p>-------------------------------------------------------------------------------------------------------以下省略
+這些就是預設的val
+主要只有一句
+backend default {
+    .host = "127.0.0.1";
+    .port = "8080";
+}
+在這邊的下面加入自己的vcl_recv:</p>
+<p>. . .</p>
+<p>sub vcl_recv {
+# Happens before we check if we have this in cache already.
+#
+# Typically you clean up the request here, removing cookies you don't need,
+# rewriting the request, etc.
+}</p>
+<p>. . .這邊要編寫的主要有4點
+Allow Varnish to serve stale (old) cache content in case of a Drupal failure. It will make the site partially available even if Drupal fails to respond
+Ensure that no administrative pages are cached at all, forcing Varnish to skip the cache for certain URLs
+Ensure caching of static files – images, scripts, stylesheets
+Strip all cookies other than several cookies needed by Drupal to work properly, including user login features
+ex:</p>
+<hr /><p>sub vcl_recv {</p>
+<pre><code># Return (pass) instructs Varnish not to cache the request
+# when the condition is met.
+
+## ADMIN PAGES ##
+
+# Here we filter out all URLs containing Drupal administrative sections
+if (
+    req.url ~ "^/admin$" ||
+    req.url ~ "^/admin/.*$" ||
+    req.url ~ "^/user$" ||
+    req.url ~ "^/user/.*$" ||
+    req.url ~ "^/flag/.*$" ||
+    req.url ~ "^.*/ajax/.*$" ||
+    req.url ~ "^.*/ahah/.*$") {
+       return (pass);
+}
+
+
+## BACKUP AND MIGRATE MODULE ##
+
+# Backup and Migrate is a very popular Drupal module that needs to be excluded
+# It won't work with Varnish
+if (req.url ~ "^/admin/content/backup_migrate/export") {
+    return (pipe);
+}
+
+## COOKIES ##
+
+# Remove cookies for stylesheets, scripts, and images used throughout the site.
+# Removing cookies will allow Varnish to cache those files.
+if (req.url ~ "(?i)\.(css|js|jpg|jpeg|gif|png|ico)(\?.*)?$") {
+    unset req.http.Cookie;
+}
+
+# Remove all cookies that are not necessary for Drupal to work properly.
+# Since it would be cumbersome to REMOVE certain cookies, we specify
+# which ones are of interest to us, and remove all others. In this particular
+# case we leave SESS, SSESS and NO_CACHE cookies used by Drupal's administrative
+# interface. Cookies in cookie header are delimited with ";", so when there are
+# many cookies, the header looks like "Cookie1=value1; Cookie2=value2; Cookie3..." 
+# and so on. That allows us to work with ";" to split cookies into individual
+# ones.
+#
+# The method for filtering unnecessary cookies has been adopted from:
+# https://fourkitchens.atlassian.net/wiki/display/TECH/Configure+Varnish+3+for+Drupal+7
+if (req.http.Cookie) {
+    # 1. We add ; to the beginning of cookie header
+    set req.http.Cookie = ";" + req.http.Cookie;
+    # 2. We remove spaces following each occurence of ";". After this operation
+    # all cookies are delimited with no spaces.
+    set req.http.Cookie = regsuball(req.http.Cookie, "; +", ";");
+    # 3. We replace ";" INTO "; " (adding the space we have previously removed) in cookies
+    # named SESS..., SSESS... and NO_CACHE. After this operation those cookies will be 
+    # easy to differentiate from the others, because those will be the only one with space
+    # after ";"   
+    set req.http.Cookie = regsuball(req.http.Cookie, ";(SESS[a-z0-9]+|SSESS[a-z0-9]+|NO_CACHE)=", "; \1=");
+    # 4. We remove all cookies with no space after ";", so basically we remove all cookies other
+    # than those above.
+    set req.http.Cookie = regsuball(req.http.Cookie, ";[^ ][^;]*", "");
+    # 5. We strip leading and trailing whitespace and semicolons.
+    set req.http.Cookie = regsuball(req.http.Cookie, "^[; ]+|[; ]+$", "");
+
+    # If there are no cookies after our striping procedure, we remove the header altogether,
+    # thus allowing Varnish to cache this page
+    if (req.http.Cookie == "") {
+        unset req.http.Cookie;
+    }
+    # if any of our cookies of interest are still there, we disable caching and pass the request
+    # straight to Apache and Drupal
+    else {
+        return (pass);
+    }
+}
+</code></pre>
+<p>}</p>
+<p>---------------------------------------------------------------------------------end5.apache web-server  設定
+更改 apache2 的ports.conf
+sudo nano /etc/apache2/ports.conf
+將 port:80  改成8080
+NameVirtualHost :8080
+Listen :8080</p>
+<p>接著更改sites-available /default 設定跟虛擬網址中的port
+都改成
+ </p>
+<h2>一次重新啟動apache2跟varnish
+sudo service apache2 restart;sudo /etc/init.d/varnish restart
+6.Drupal 安裝Varnish 模組
+drush en varnish -y
+接著在sites/default/settings.php 中，加入以下設定</h2>
+<p>// Add Varnish as the page cache handler.
+$conf['cache_backends'] = array('sites/all/modules/varnish/varnish.cache.inc');
+$conf['cache_class_cache_page'] = 'VarnishCache';
+// Tell Drupal it's behind a proxy.
+$conf['reverse_proxy'] = TRUE;
+ 
+// Tell Drupal what addresses the proxy server(s) use.
+$conf['reverse_proxy_addresses'] = array('127.0.0.1');
+ 
+// Bypass Drupal bootstrap for anonymous users so that Drupal sets max-age &lt; 0.
+$conf['page_cache_invoke_hooks'] = FALSE;
+ 
+// Make sure that page cache is enabled.
+$conf['cache'] = 1;
+$conf['cache_lifetime'] = 0;
+$conf['page_cache_maximum_age'] = 21600;</p>
+<hr /><p>7.Drupal Varnish 模組 設定inan
+進入Drupal中，進到模組頁面，確認Varnish 模組開啟後，點擊設定，進入設定頁面
+將Varnish version 改成3.X
+Varnish Control Key這個欄位要將/etc/varnish/secret中的值貼到裡面</p>
+<p>在 這個設定頁面會遇到這段錯誤訊息：Notice: Undefined offset: 1 en theme_varnish_status()  (línea 264 de  /home/mysite/public_html/sites/all/modules/varnish/varnish.module).
+解決方法 
+到sites/all/modules/varnish/varnish.module中
+ctrl+w尋找
+function theme_varnish_status($status) {
+貼在這行裡面
+if ($terminal == 'theme_hook_original') continue;</p>
+<p>drush cc all先清除快取
+錯誤訊息就會消失  在狀態報告裡面會看到Varnish status  Running
+然後給varnish模組777權限
+再來drush cc all 跟sudo service apache2 restart;sudo /etc/init.d/varnish restart重啟
+curl -I  查看是否緩存成功
+x-varnish:後面如果只有一組是沒有啟動成功，一般第一次都是失敗
+第一次</p>
+<p>第二次</p>
+<p> 
+ 
+資料來源：
+https://www.digitalocean.com/community/tutorials/how-to-speed-up-your-dr...
+http://www.drupal001.com/2014/10/drupal7-varnish/
+ </p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag></field_tag></item><item key="8"><title>NGINX+APACHE2+MySQL&#x8CA0;&#x8F09;&#x5E73;&#x8861;&#x8207;&#x53CD;&#x5411;&#x4EE3;&#x7406;</title><body><![CDATA[<p>能夠使多台apache2負擔流量，並以nginx作反向代理
+基本架構：1台nginx反向與負載平衡，2台apache2當web server，1台mysql當db server</p>
+<p>反向代理
+反向代理（Reverse Proxy）方式是指以代理服務器來接受internet上的連接請求，然後將請求轉發給內部網絡上的服務
+器，並將從服務器上得到的結果返回給internet上請求連接的客戶端，此時代理服務器對外就表現為一個服務器。
+反向代理的作用
+1.保護網站安全：任何來自Internet的請求都必須先經過代理服務器</p>
+<p>2.通過配置緩存功能加速Web請求：可以緩存真實Web服務器上的某些靜態資源，減輕真實Web服務器的負載壓力</p>
+<p>3.實現負載均衡：充當負載均衡服務器均衡地分發請求，平衡集群中各個服務器的負載壓力</p>
+<p>負載平衡方式
+目前在 nginx 共支援下列種類或架構的負載平衡方式:
+round-robin — 根據總共有多少 Server ，將要求依照順序分散到每台 Server 之上
+least-connected — 根據連線數量判斷，下一個請求會被連到連線數量最少的 Server 上
+ip-hash — 根據用戶的 ip 位址，透過 hash-function 來決定要連到那一個 Server 上(備註一)
+備註一：ip - hash 有可能導致伺服器之間的連線不平衡。
+默認的負載均衡方式是輪詢，所用的請求通過反向代理給apache2組，nginx通過負載均衡來分發這些請求到三個服務
+權重的負載均衡方式，在輪詢的基礎上為每個服務器配置權重可以保證某個服務器盡可能處理多的請求
+upstream myapp1 {
+             server srv1.example.com weight=3;
+               server srv2.example.com;
+               server srv3.example.com;
+  }
+上面的配置中，如果有5個請求，有3個會分配到srv1上，有一個會分配到srv2上，有一個會分配到srv3上。如果不指定weight，默認是平的的。簡單來說，權重越高該伺服器處理的請求會越多。
+負載均衡包含服務器的健康檢查，如果某個請求被分配到了一個服務器上，服務器無法響應，那麼nginx會標記它失敗了，在短時間內，nginx是不會將之後的請求分配給標記失敗的服務器。
+ 
+nginx反向與負載平衡
+ 
+1:更新系統
+先做所有套件系統的更新
+sudo apt-get update
+sudo apt-get upgrade
+ 
+2.安裝nginx
+sudo apt-get install nginx
+sudo service nginx start
+ 
+3.修改nginx設定檔
+＃＃ vi /etc/nginx/sites-available/default
+ </p>
+<h1>Proxy Setting</h1>
+<p>proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header REMOTE-HOST $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+ </p>
+<h1>Cache Server</h1>
+<p>proxy_cache_path /var/cachecc levels=1:2 keys_zone=content:20m inactive=1d$    ##cachecc是自己建立的資料夾
+proxy_temp_path /var/cachecc/tmp;
+ 
+upstream test {
+server 192.168.43.124:80 weight=1;
+server 192.168.43.254:80;
+}
+server {
+listen 80;
+index index.html index.htm;
+server_name test.a.tw;
+location / {
+proxy_redirect off;
+proxy_set_header Host $host; #沒有這段會使網站圖片css.js無法顯示
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_next_upstream error timeout invalid_header http_500 http_$
+proxy_connect_timeout 10s;
+proxy_read_timeout 2s;
+proxy_pass http://test;
+}
+error_page 500 502 503 504 /50x.html;
+location = /50x.html {
+root /usr/share/nginx/www;
+}
+ 
+##cache設定
+location ~ .<em>.(gif|jpg|jpeg|png|bmp|swf|js|css|html)$
+{
+proxy_cache content;
+proxy_next_upstream http_502 http_504 error timeout invalid_header;
+proxy_cache_valid 200 304 5m;
+proxy_cache_valid 301 302 1m;
+proxy_cache_valid any 1m;
+proxy_cache_key $host$uri$is_args$args;
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $remote_addr;
+proxy_set_header Accept-Encoding "none";
+proxy_pass http://test;
+proxy_ignore_headers "Cache-Control" "Expires";
+expires 1d;
+}
+location ~ .</em>.(php|cgi)?$
+{
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_pass http://test;
+}
+}
+ 
+apache2設定
+1:更新系統
+先做所有套件系統的更新
+sudo apt-get update
+sudo apt-get upgrade
+ 
+2.安裝apache2
+sudo apt-get install apache2
+sudo apt-get install php5
+sudo apt-get install php5-gd
+sudo apt-get install php5-mysql
+ 
+3.開啟簡潔網址（curl)
+在/etc/apache2/apache2.conf修改
+AllowOverride 後面改成All
+sudo a2enmod rewrite
+ 
+注意事項：
+1.在建立drupal之前，先確認apache2的網站根目錄，或者使用Virtual Host確認網站根目錄指向正確
+2.在網頁建立時，資料庫選擇進階設定，給mysql server的ip與預設的port 3306
+ 
+mysql資料庫server
+1:更新系統
+先做所有套件系統的更新
+sudo apt-get update
+sudo apt-get upgrade
+ 
+2.安裝mysql
+sudo apt-get install mysql-server
+sudo apt-get install libapache2-mod-auth-mysql
+sudo apt-get install php5-mysql
+ 
+3.使外面夠用ip連線至mysql
+如果我們要通過其他主機使用IP地址來連接MySQL資料庫的時候，就需要修改MySQL的配置文件/etc/mysql/my.cnf</p>
+<h1>Instead of skip-networking the default is now to listen only on</h1>
+<h1>localhost which is more compatible and is not less secure.</h1>
+<p>#bind-address = 127.0.0.1 //這一行是要注釋掉的
+只要注解掉這一行bind-address之後再重啟mysql就可以通過其他機器使用IP地址來連接mysql了。
+ 
+注意事項：
+資料庫建立後，記得建立使用者與資料庫使用者權限，後面網站建立時進階設定如果沒有會失敗
+ 
+Virtual Host多站點設定
+ 
+在apache2上
+1.在apache2上建立virtual host的conf
+/etc/apache2/sites-available/
+建立conf檔
+nano artlas.a.tw.conf</p>
+<p>#管理者郵箱
+ServerAdmin artlas@gmail.com
+#網站名稱
+ServerName artlas.a.tw
+#網站別名
+ServerAlias artlas.a.tw (更改你想要的虛擬網址)
+#網站的根目錄
+DocumentRoot /var/www/artlas
+#網站的錯誤日誌檔存放的位置與檔名
+ErrorLog /var/www/artlas/logs/error.log
+#網站日誌檔存放的位置與檔名c
+CustomLog /var/www/artlas/logs/access.log combined</p>
+<p>2.建立在sites-enabled的連結檔
+啟用虛擬網域設定
+a2ensite artlas.a.tw.conf
+ 
+3.重新啟動apache2
+service apache2 restart
+ 
+ 
+nfs網站同步共用伺服
+在這邊，我們分為服務端與客戶端
+ 
+服務端
+1.安裝NFS服務端
+sudo apt-get install nfs-kernel-server
+ 
+2.打開/etc/exports文件，在末尾加入：
+/home/zdw *(rw,sync,no_root_squash)
+其中/home/zdw 是你要共享的目錄</p>
+<ul><li>：允許所有的網段訪問
+rw ：讀寫許可權
+sync：資料同步寫入內在和硬碟
+no_root_squash：nfs客戶端共享目錄使用者許可權
+如果需要指定只對某個網段(如192.168.1.1~192.168.1.192)可以這樣設置
+/usr/local/www/ 192.168.1.10(rw,sync,no_root_squash,no_subtree_check) 192.168.1.11(rw,sync,no_root_squash,no_subtree_check)
+ 
+3.重啟服務
+sudo /etc/init.d/portmap restart</li>
+</ul>]]></body><status>&#x958B;&#x555F;</status><category>3</category><field_tag></field_tag></item><item key="9"><title>Drupal&#x4F7F;&#x7528;Google Custom Search Engine&#x641C;&#x7D22;&#x7AD9;&#x5167;&#x8CC7;&#x6599;</title><body><![CDATA[<p>有時候我們會想再網站內使用搜尋這個功能可是又不想使用drupal內建的搜尋或是其他模組該怎麼辦呢
+這個時候可以考慮用google custom search還可以搭配Google Analytics幫你蒐集資料是個不錯的選擇
+如何在網站內使用google搜尋呢？
+1.首先先安裝模組：https://www.drupal.org/project/google_cse2.之後再去你的google帳戶進行設定 http://www.google.com/cse/manage/all3.新增一個搜尋引擎</p>
+<p>4.點擊 編輯搜尋引擎 可以進行一些基本的設定或是更改外觀等</p>
+<p>5.點擊 搜尋功能&gt;點開 進階 分頁&gt;展開 網頁搜尋設定 並且在 Query Parameter Name 輸入 query 並按下儲存</p>
+<p>6.回到設定 點選詳細資料的搜尋引擎ID 並且複製起來</p>
+<p>7.在你的drupal網站打開 設定&gt;搜尋與metadata&gt;搜尋設定 就會看到搜尋的設定頁 往下看
+啟動搜尋模組將google cse打勾
+預計搜尋模組也選擇google cse
+並將剛剛複製的搜尋引擎ID貼上
+Search results "Add to Google" Google Gadget也記得將選取 取消</p>
+<p>8.進階設定 內的 Layout of Search Engine 選擇 Results only 否則將會出現兩個搜尋框的版面</p>
+<p>9.在區塊設定內就可以將 內建的搜尋表單 拿出來用</p>
+<p>10.可是！！！目前放出的7.x-2.3版本是有問題的
+所以建議使用7.x-2.x-dev
+並且使用37樓的解決方法
+https://www.drupal.org/node/2541686#comment-10250781</p>
+<p> 
+2015/11/16成功</p>]]></body><status>&#x958B;&#x555F;</status><category>1</category><field_tag></field_tag></item></response>
